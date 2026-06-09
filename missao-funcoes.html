@@ -1,0 +1,1429 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Missão Funções: A Jornada Matemática</title>
+<style>
+/* ============================================================
+   MISSÃO FUNÇÕES — Design System
+   Público: 12-17 anos, TDAH / dislexia / dificuldades mat.
+   Paleta: fundo escuro espacial + neons acessíveis
+   Tipografia: OpenDyslexic-friendly (sistema sans-serif amplo)
+   ============================================================ */
+
+:root {
+  --bg:        #0d1b2a;
+  --bg2:       #1a2f45;
+  --card:      #1e3a54;
+  --card2:     #253d5b;
+  --accent:    #00e5ff;
+  --green:     #39ff14;
+  --yellow:    #ffe600;
+  --pink:      #ff4fcb;
+  --orange:    #ff8c00;
+  --red:       #ff3333;
+  --white:     #f0f8ff;
+  --gray:      #8ab4cc;
+  --radius:    18px;
+  --radiussm:  10px;
+  --shadow:    0 4px 24px rgba(0,229,255,.18);
+  --font:      'Segoe UI', 'Arial Rounded MT Bold', Arial, sans-serif;
+  --transition: .22s cubic-bezier(.4,0,.2,1);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--white);
+  min-height: 100vh;
+  overflow-x: hidden;
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+/* ---- SKIP LINK ---- */
+.skip-link {
+  position: absolute; top: -99px; left: 8px; background: var(--accent);
+  color: var(--bg); padding: 8px 16px; border-radius: 8px; z-index: 9999;
+  font-weight: 700; transition: top .2s;
+}
+.skip-link:focus { top: 8px; }
+
+/* ---- STARS BACKGROUND ---- */
+#stars-canvas {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+}
+
+/* ---- SCREENS ---- */
+.screen {
+  position: relative; z-index: 1;
+  display: none; flex-direction: column; align-items: center;
+  min-height: 100vh; padding: 20px 16px 40px;
+}
+.screen.active { display: flex; }
+
+/* ---- CARD ---- */
+.card {
+  background: var(--card);
+  border: 2px solid rgba(0,229,255,.2);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+  width: 100%; max-width: 680px;
+  box-shadow: var(--shadow);
+}
+.card + .card { margin-top: 18px; }
+
+/* ---- BUTTONS ---- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+  font-family: var(--font); font-size: 1.1rem; font-weight: 700;
+  padding: 16px 32px; border-radius: 50px; border: none; cursor: pointer;
+  transition: var(--transition); text-decoration: none;
+  min-width: 180px; min-height: 56px; letter-spacing: .03em;
+  position: relative; overflow: hidden;
+}
+.btn:focus-visible { outline: 3px solid var(--yellow); outline-offset: 4px; }
+.btn:active { transform: scale(.96); }
+.btn-primary { background: var(--accent); color: var(--bg); }
+.btn-primary:hover { background: #5eefff; box-shadow: 0 0 24px var(--accent); }
+.btn-green { background: var(--green); color: var(--bg); }
+.btn-green:hover { box-shadow: 0 0 24px var(--green); }
+.btn-yellow { background: var(--yellow); color: var(--bg); }
+.btn-yellow:hover { box-shadow: 0 0 24px var(--yellow); }
+.btn-gray { background: var(--card2); color: var(--white); border: 2px solid var(--gray); }
+.btn-gray:hover { background: var(--bg2); }
+.btn-sm { font-size: .95rem; padding: 10px 22px; min-width: 120px; min-height: 44px; }
+.btn-block { width: 100%; }
+.btn[disabled] { opacity: .45; cursor: not-allowed; }
+
+/* ---- TYPOGRAPHY ---- */
+h1 { font-size: clamp(1.8rem, 5vw, 2.8rem); line-height: 1.15; }
+h2 { font-size: clamp(1.4rem, 4vw, 2rem); }
+h3 { font-size: 1.2rem; }
+.emoji-big { font-size: 3.5rem; display: block; margin-bottom: 8px; }
+.highlight { color: var(--accent); }
+.highlight-green { color: var(--green); }
+.highlight-yellow { color: var(--yellow); }
+.text-center { text-align: center; }
+.mt-8 { margin-top: 8px; }
+.mt-16 { margin-top: 16px; }
+.mt-24 { margin-top: 24px; }
+.mb-8 { margin-bottom: 8px; }
+.mb-16 { margin-bottom: 16px; }
+
+/* ---- TOP BAR ---- */
+#top-bar {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(13,27,42,.92); backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(0,229,255,.15);
+  width: 100%; padding: 10px 16px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 12px;
+}
+#top-bar.hidden { display: none; }
+.top-bar-center { display: flex; align-items: center; gap: 16px; flex: 1; justify-content: center; }
+.xp-bar-wrap { flex: 1; max-width: 260px; }
+.xp-bar-label { font-size: .8rem; color: var(--gray); margin-bottom: 3px; }
+.xp-bar-bg { background: var(--bg2); border-radius: 20px; height: 12px; overflow: hidden; }
+.xp-bar-fill {
+  background: linear-gradient(90deg, var(--accent), var(--green));
+  height: 100%; border-radius: 20px;
+  transition: width .5s ease;
+}
+.stars-display { font-size: 1.1rem; color: var(--yellow); font-weight: 700; white-space: nowrap; }
+.lives-display { font-size: 1.1rem; white-space: nowrap; }
+#btn-menu-top { background: none; border: 2px solid var(--gray); border-radius: 10px; color: var(--white); padding: 6px 14px; cursor: pointer; font-size: .9rem; font-family: var(--font); transition: var(--transition); }
+#btn-menu-top:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ---- PROGRESS DOTS ---- */
+.world-dots { display: flex; gap: 8px; align-items: center; }
+.world-dot {
+  width: 14px; height: 14px; border-radius: 50%;
+  background: var(--bg2); border: 2px solid var(--gray);
+  transition: var(--transition);
+}
+.world-dot.done { background: var(--green); border-color: var(--green); }
+.world-dot.active { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 8px var(--accent); }
+
+/* ---- TOAST / FEEDBACK ---- */
+#toast {
+  position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(120px);
+  background: var(--card2); border-radius: var(--radius);
+  padding: 16px 28px; font-size: 1.05rem; font-weight: 600;
+  border: 2px solid transparent; z-index: 9000;
+  transition: transform .35s cubic-bezier(.34,1.56,.64,1), opacity .35s;
+  max-width: 420px; width: 90%; text-align: center;
+  opacity: 0;
+}
+#toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+#toast.success { border-color: var(--green); color: var(--green); }
+#toast.error { border-color: var(--red); color: var(--red); }
+#toast.info { border-color: var(--accent); color: var(--accent); }
+
+/* ---- HINT BOX ---- */
+.hint-box {
+  background: rgba(255,230,0,.08); border: 2px solid var(--yellow);
+  border-radius: var(--radiussm); padding: 14px 18px;
+  margin-top: 16px; color: var(--yellow); font-size: .95rem;
+  display: none;
+}
+.hint-box.show { display: block; }
+.hint-box-header { font-weight: 700; margin-bottom: 6px; }
+
+/* ---- ANSWER OPTIONS ---- */
+.options-grid {
+  display: grid; gap: 12px; margin-top: 18px;
+  grid-template-columns: 1fr 1fr;
+}
+@media (max-width: 480px) { .options-grid { grid-template-columns: 1fr; } }
+
+.option-btn {
+  background: var(--card2); border: 3px solid transparent;
+  border-radius: var(--radius); padding: 16px 14px;
+  font-family: var(--font); font-size: 1.05rem; font-weight: 600;
+  color: var(--white); cursor: pointer; transition: var(--transition);
+  text-align: center; min-height: 62px;
+}
+.option-btn:hover { border-color: var(--accent); background: rgba(0,229,255,.1); }
+.option-btn:focus-visible { outline: 3px solid var(--yellow); }
+.option-btn.correct { border-color: var(--green); background: rgba(57,255,20,.12); color: var(--green); }
+.option-btn.wrong { border-color: var(--red); background: rgba(255,51,51,.1); color: var(--red); }
+.option-btn.reveal-correct { border-color: var(--green); background: rgba(57,255,20,.08); }
+.option-btn[disabled] { cursor: not-allowed; }
+
+/* ---- CANVAS WRAPPER ---- */
+.canvas-wrap {
+  display: flex; justify-content: center; margin: 16px 0;
+  overflow: hidden; border-radius: var(--radiussm);
+}
+canvas { display: block; border-radius: var(--radiussm); }
+
+/* ---- SLIDER ---- */
+.slider-wrap { margin-top: 18px; }
+.slider-label { font-size: .9rem; color: var(--gray); margin-bottom: 8px; display: flex; justify-content: space-between; }
+input[type=range] {
+  width: 100%; accent-color: var(--accent); height: 6px; cursor: pointer;
+  border-radius: 4px;
+}
+
+/* ---- INPUT ---- */
+.num-input {
+  background: var(--bg2); border: 3px solid var(--gray); border-radius: var(--radiussm);
+  color: var(--white); font-size: 1.4rem; font-family: var(--font);
+  padding: 12px 18px; text-align: center; width: 140px;
+  transition: var(--transition);
+}
+.num-input:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px rgba(0,229,255,.25); }
+
+/* ---- WORLD MAP ---- */
+#world-map-screen .world-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 18px; width: 100%; max-width: 900px; margin-top: 24px;
+}
+.world-card {
+  background: var(--card); border: 3px solid transparent;
+  border-radius: var(--radius); padding: 24px 20px;
+  cursor: pointer; transition: var(--transition); position: relative;
+}
+.world-card.locked { opacity: .5; cursor: not-allowed; }
+.world-card.done { border-color: var(--green); }
+.world-card:not(.locked):hover { border-color: var(--accent); transform: translateY(-4px); box-shadow: var(--shadow); }
+.world-card-icon { font-size: 2.8rem; margin-bottom: 10px; }
+.world-card-title { font-size: 1.15rem; font-weight: 700; color: var(--accent); }
+.world-card-desc { font-size: .9rem; color: var(--gray); margin-top: 6px; }
+.world-card-stars { color: var(--yellow); font-size: 1.1rem; margin-top: 8px; }
+.world-card-lock { position: absolute; top: 14px; right: 16px; font-size: 1.4rem; }
+
+/* ---- MEDALS SCREEN ---- */
+.medal-grid { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; margin-top: 18px; }
+.medal-item {
+  background: var(--card2); border-radius: var(--radius); padding: 16px 20px;
+  text-align: center; min-width: 110px;
+}
+.medal-item .icon { font-size: 2.2rem; }
+.medal-item .lbl { font-size: .82rem; margin-top: 6px; color: var(--gray); }
+.medal-item.earned .lbl { color: var(--yellow); }
+.medal-item.earned { border: 2px solid var(--yellow); }
+
+/* ---- TYPING MACHINE ANIM ---- */
+.type-anim::after { content: '|'; animation: blink .7s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+/* ---- PULSES ---- */
+@keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
+.pulse { animation: pulse 2s infinite; }
+
+/* ---- STAR BURST ---- */
+#starburst {
+  position: fixed; inset: 0; z-index: 8000;
+  display: none; pointer-events: none;
+  align-items: center; justify-content: center;
+}
+#starburst.show { display: flex; }
+#starburst-text {
+  font-size: clamp(2rem, 8vw, 5rem); font-weight: 900;
+  color: var(--yellow); text-shadow: 0 0 40px var(--orange);
+  animation: burstIn .6s cubic-bezier(.34,1.56,.64,1);
+  text-align: center;
+}
+@keyframes burstIn {
+  0% { transform: scale(.3) rotate(-10deg); opacity: 0; }
+  100% { transform: scale(1) rotate(0); opacity: 1; }
+}
+
+/* ---- RESPONSIVE ---- */
+@media (max-width: 600px) {
+  .card { padding: 18px 14px; }
+  .btn { font-size: 1rem; padding: 14px 22px; min-width: 140px; }
+  body { font-size: 16px; }
+}
+
+/* ---- SCROLLBAR ---- */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--card2); border-radius: 4px; }
+
+/* ---- QUESTION COUNTER ---- */
+.q-counter { font-size: .85rem; color: var(--gray); margin-bottom: 8px; }
+
+/* ---- MACHINE GAME (World 1) ---- */
+.machine-wrap {
+  display: flex; flex-direction: column; align-items: center; gap: 18px;
+  margin: 18px 0;
+}
+.machine-body {
+  background: var(--bg2); border: 3px solid var(--accent);
+  border-radius: var(--radius); padding: 24px 32px;
+  text-align: center; position: relative; min-width: 260px;
+}
+.machine-body .formula { font-size: 1.6rem; color: var(--yellow); font-weight: 700; margin: 8px 0; }
+.machine-arrow { font-size: 2rem; color: var(--accent); }
+.machine-io { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; justify-content: center; }
+.io-box {
+  background: var(--card); border: 2px solid var(--gray);
+  border-radius: var(--radiussm); padding: 12px 20px;
+  text-align: center; min-width: 90px;
+}
+.io-box .lbl { font-size: .8rem; color: var(--gray); }
+.io-box .val { font-size: 1.6rem; font-weight: 700; color: var(--accent); }
+
+/* ---- CONCAVITY DIAGRAM ---- */
+.para-row { display: flex; gap: 18px; flex-wrap: wrap; justify-content: center; margin: 16px 0; }
+.para-choice {
+  background: var(--card2); border: 3px solid transparent; border-radius: var(--radius);
+  padding: 16px 20px; text-align: center; cursor: pointer; transition: var(--transition);
+  min-width: 130px;
+}
+.para-choice:hover { border-color: var(--accent); }
+.para-choice.selected { border-color: var(--yellow); }
+.para-choice.correct { border-color: var(--green); }
+.para-choice.wrong { border-color: var(--red); }
+
+/* ---- LOADING ---- */
+#loading-screen {
+  position: fixed; inset: 0; z-index: 99999;
+  background: var(--bg); display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 20px;
+}
+.loader-ring {
+  width: 64px; height: 64px; border: 5px solid var(--card2);
+  border-top-color: var(--accent); border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<a href="#main-content" class="skip-link">Pular para o conteúdo</a>
+
+<!-- Stars background -->
+<canvas id="stars-canvas" aria-hidden="true"></canvas>
+
+<!-- Loading -->
+<div id="loading-screen" role="status" aria-label="Carregando jogo">
+  <div class="loader-ring"></div>
+  <p style="color:var(--accent);font-weight:700">Carregando Missão Funções…</p>
+</div>
+
+<!-- Toast -->
+<div id="toast" role="alert" aria-live="polite"></div>
+
+<!-- Star Burst -->
+<div id="starburst" aria-hidden="true">
+  <div id="starburst-text"></div>
+</div>
+
+<!-- TOP BAR -->
+<header id="top-bar" class="hidden" role="banner">
+  <button id="btn-menu-top" aria-label="Menu principal">☰ Menu</button>
+  <div class="top-bar-center">
+    <div class="xp-bar-wrap">
+      <div class="xp-bar-label">XP</div>
+      <div class="xp-bar-bg"><div class="xp-bar-fill" id="xp-bar" style="width:0%"></div></div>
+    </div>
+    <div class="stars-display" aria-label="Estrelas">⭐ <span id="stars-count">0</span></div>
+    <div class="world-dots" id="world-dots" aria-label="Progresso dos mundos" role="img"></div>
+  </div>
+  <div class="lives-display" aria-label="Vidas">❤️ <span id="lives-count">3</span></div>
+</header>
+
+<main id="main-content">
+
+<!-- ===================== SCREEN: INTRO ===================== -->
+<section id="intro-screen" class="screen active" aria-label="Tela inicial">
+  <div style="max-width:580px;width:100%;text-align:center;margin-top:clamp(20px,8vh,80px)">
+    <span class="emoji-big" role="img" aria-label="Foguete">🚀</span>
+    <h1><span class="highlight">Missão Funções</span><br>A Jornada Matemática</h1>
+    <p style="margin-top:16px;font-size:1.1rem;color:var(--gray)">
+      Ajude <strong style="color:var(--accent)">Zara</strong> a recuperar os
+      <strong style="color:var(--yellow)">Cristais Matemáticos</strong>
+      espalhados pelos 5 mundos!
+    </p>
+    <div class="card mt-24" style="text-align:left">
+      <h3 class="highlight-yellow">📋 Como jogar</h3>
+      <ul style="margin-top:12px;padding-left:20px;color:var(--gray);line-height:2">
+        <li>Responda as perguntas de cada mundo</li>
+        <li>Ganhe estrelas e cristais</li>
+        <li>Use as dicas quando precisar — sem punição!</li>
+        <li>Seu progresso é salvo automaticamente</li>
+      </ul>
+    </div>
+    <div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:28px">
+      <button class="btn btn-primary pulse" id="btn-start" aria-label="Iniciar nova aventura">
+        ⚡ Começar Aventura
+      </button>
+      <button class="btn btn-gray" id="btn-continue" style="display:none" aria-label="Continuar jogo salvo">
+        ▶️ Continuar
+      </button>
+    </div>
+    <p style="margin-top:18px;font-size:.85rem;color:var(--gray)">
+      Progresso salvo automaticamente no navegador
+    </p>
+  </div>
+</section>
+
+<!-- ===================== SCREEN: WORLD MAP ===================== -->
+<section id="world-map-screen" class="screen" aria-label="Mapa dos mundos">
+  <div style="max-width:900px;width:100%;text-align:center">
+    <h2 class="highlight mt-8">🗺️ Escolha o Mundo</h2>
+    <p style="color:var(--gray);margin-top:8px">Cada mundo tem 5 desafios. Colete os cristais!</p>
+    <div class="world-grid" id="world-grid" role="list"></div>
+  </div>
+</section>
+
+<!-- ===================== SCREEN: GAME ===================== -->
+<section id="game-screen" class="screen" aria-label="Tela do jogo" style="justify-content:flex-start">
+  <div style="max-width:680px;width:100%;margin-top:12px">
+    <!-- World header -->
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px">
+      <button class="btn btn-gray btn-sm" id="btn-back-map" aria-label="Voltar ao mapa">← Mapa</button>
+      <div>
+        <div id="world-title-small" style="font-weight:700;color:var(--accent)"></div>
+        <div class="q-counter" id="q-counter"></div>
+      </div>
+      <div style="margin-left:auto;display:flex;gap:8px;align-items:center">
+        <button class="btn btn-yellow btn-sm" id="btn-hint" aria-label="Pedir dica">💡 Dica</button>
+      </div>
+    </div>
+
+    <!-- Question card -->
+    <div class="card" id="question-card" aria-live="polite">
+      <p id="question-text" style="font-size:1.15rem;font-weight:600"></p>
+      <div id="question-visual"></div>
+      <div id="question-options"></div>
+      <div class="hint-box" id="hint-box">
+        <div class="hint-box-header">💡 Dica:</div>
+        <p id="hint-text"></p>
+      </div>
+    </div>
+
+    <!-- Next button -->
+    <div style="text-align:center;margin-top:20px">
+      <button class="btn btn-green btn-block" id="btn-next" style="display:none" aria-label="Próxima pergunta">
+        Próxima ➜
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SCREEN: WORLD COMPLETE ===================== -->
+<section id="complete-screen" class="screen text-center" aria-label="Mundo completo">
+  <div class="card" style="max-width:520px;margin-top:40px">
+    <span id="complete-emoji" class="emoji-big">🎉</span>
+    <h2 id="complete-title" class="highlight mt-8"></h2>
+    <p id="complete-msg" style="color:var(--gray);margin-top:10px"></p>
+    <div id="complete-stars" style="font-size:2.2rem;margin:18px 0;color:var(--yellow)"></div>
+    <div id="medals-earned" class="medal-grid"></div>
+    <div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:24px">
+      <button class="btn btn-primary" id="btn-next-world">Próximo Mundo 🌟</button>
+      <button class="btn btn-gray" id="btn-back-map2">Ver Mapa</button>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SCREEN: GAME OVER (all done) ===================== -->
+<section id="victory-screen" class="screen text-center" aria-label="Vitória final">
+  <div class="card" style="max-width:520px;margin-top:40px">
+    <span class="emoji-big">🏆</span>
+    <h1 class="highlight mt-8">Parabéns, Herói!</h1>
+    <p style="color:var(--gray);margin-top:12px">
+      Você completou <strong style="color:var(--yellow)">todos os mundos</strong>
+      e recuperou todos os Cristais Matemáticos!
+    </p>
+    <div id="final-stars" style="font-size:2rem;margin:20px 0;color:var(--yellow)"></div>
+    <canvas id="fireworks-canvas" width="400" height="160" style="border-radius:12px;margin-bottom:16px"></canvas>
+    <button class="btn btn-primary" id="btn-restart">🔄 Jogar Novamente</button>
+  </div>
+</section>
+
+<!-- ===================== SCREEN: MEDALS ===================== -->
+<section id="medals-screen" class="screen" aria-label="Medalhas e conquistas">
+  <div style="max-width:700px;width:100%;text-align:center">
+    <h2 class="highlight mt-8">🏅 Suas Conquistas</h2>
+    <p style="color:var(--gray)">Colecione todas as medalhas!</p>
+    <div id="all-medals" class="medal-grid mt-24"></div>
+    <button class="btn btn-gray mt-24" id="btn-medals-back">← Voltar</button>
+  </div>
+</section>
+
+</main><!-- /main -->
+
+<script>
+/* ================================================================
+   MISSÃO FUNÇÕES — JavaScript completo
+   ================================================================ */
+
+// ---- SAVE / LOAD ----
+const SAVE_KEY = 'missao_funcoes_v2';
+function loadSave() {
+  try { return JSON.parse(localStorage.getItem(SAVE_KEY)) || null; } catch { return null; }
+}
+function writeSave(data) {
+  try { localStorage.setItem(SAVE_KEY, JSON.stringify(data)); } catch {}
+}
+
+// ---- STATE ----
+let G = {
+  stars: 0,
+  xp: 0,
+  lives: 5,
+  worldsDone: [],      // array of world indices completed
+  worldStars: {},      // { worldIndex: starCount }
+  medals: [],
+  currentWorld: 0,
+  currentQ: 0,
+  correctInRow: 0,
+  wrongOnThis: 0,      // wrong attempts on current question
+  hintShown: false,
+  hintsUsed: 0,
+};
+
+const MAX_XP = 500;
+
+// ---- WORLDS DATA ----
+const WORLDS = [
+  {
+    id: 0,
+    icon: '⚙️',
+    title: 'Mundo 1',
+    subtitle: 'Máquina de Entradas e Saídas',
+    desc: 'Aprenda o que é uma função',
+    color: '#00e5ff',
+    questions: buildWorld1(),
+  },
+  {
+    id: 1,
+    icon: '📏',
+    title: 'Mundo 2',
+    subtitle: 'Reino das Retas',
+    desc: 'Função do 1º grau: y = ax + b',
+    color: '#39ff14',
+    questions: buildWorld2(),
+  },
+  {
+    id: 2,
+    icon: '📊',
+    title: 'Mundo 3',
+    subtitle: 'Desafio dos Gráficos',
+    desc: 'Leia e interprete gráficos lineares',
+    color: '#ffe600',
+    questions: buildWorld3(),
+  },
+  {
+    id: 3,
+    icon: '🌊',
+    title: 'Mundo 4',
+    subtitle: 'Vale das Parábolas',
+    desc: 'Função do 2º grau: y = ax² + bx + c',
+    color: '#ff4fcb',
+    questions: buildWorld4(),
+  },
+  {
+    id: 4,
+    icon: '💎',
+    title: 'Mundo 5',
+    subtitle: 'Guardião das Funções',
+    desc: 'Desafio final — todos os conteúdos!',
+    color: '#ff8c00',
+    questions: buildWorld5(),
+  },
+];
+
+// ---- MEDAL DEFINITIONS ----
+const ALL_MEDALS = [
+  { id:'first_step',   icon:'👣', name:'Primeiro Passo',    desc:'Complete o Mundo 1' },
+  { id:'linear_hero',  icon:'📐', name:'Herói Linear',      desc:'Complete o Mundo 2' },
+  { id:'graph_reader', icon:'👁️', name:'Leitor de Gráficos', desc:'Complete o Mundo 3' },
+  { id:'para_master',  icon:'🌊', name:'Mestre das Parábolas', desc:'Complete o Mundo 4' },
+  { id:'champion',     icon:'🏆', name:'Campeão',           desc:'Complete todos os mundos' },
+  { id:'no_hint',      icon:'🧠', name:'Sem Dicas',         desc:'Complete um mundo sem usar dicas' },
+  { id:'perfect',      icon:'⭐', name:'Perfeito',          desc:'3 estrelas em qualquer mundo' },
+  { id:'streak5',      icon:'🔥', name:'Em Chamas',         desc:'5 acertos seguidos' },
+];
+const WORLD_MEDALS = ['first_step','linear_hero','graph_reader','para_master','champion'];
+
+// ================================================================
+//  QUESTION BUILDERS
+// ================================================================
+
+function buildWorld1() {
+  return [
+    {
+      type: 'machine',
+      text: '🔵 Uma FUNÇÃO é uma máquina mágica:\nvocê coloca um número (ENTRADA)\ne ela devolve outro (SAÍDA).\n\nNa máquina abaixo: regra = dobrar + 1\nEntre com x = 3. Qual é a saída?',
+      formula: 'y = 2x + 1',
+      inputVal: 3,
+      options: ['5', '6', '7', '8'],
+      correct: 2, // 7
+      hint: 'Substitua x = 3 na fórmula: y = 2×3 + 1 = 6 + 1 = 7',
+    },
+    {
+      type: 'machine',
+      text: '⚙️ Mesma máquina: y = 2x + 1\nAgora com x = 0. Qual é a saída?',
+      formula: 'y = 2x + 1',
+      inputVal: 0,
+      options: ['0', '1', '2', '3'],
+      correct: 1, // 1
+      hint: 'y = 2×0 + 1 = 0 + 1 = 1',
+    },
+    {
+      type: 'choice',
+      text: '🤔 Qual dessas situações NÃO é uma função?\n(Uma função: cada entrada tem UMA saída)',
+      options: [
+        'Temperatura do dia (1 dia → 1 temperatura)',
+        'Uma pessoa pode ter 2 alturas ao mesmo tempo',
+        'Preço de 1 kg de arroz (1 produto → 1 preço)',
+        'Área de um quadrado (1 lado → 1 área)',
+      ],
+      correct: 1,
+      hint: 'Numa função, cada entrada dá exatamente UMA saída. Uma pessoa não pode ter duas alturas ao mesmo tempo… isso é impossível, não é uma função válida nesse sentido de duplicidade.',
+    },
+    {
+      type: 'machine',
+      text: '🔢 Nova máquina: y = x² (eleva ao quadrado)\nEntre com x = 4. Qual é a saída?',
+      formula: 'y = x²',
+      inputVal: 4,
+      options: ['8', '12', '16', '24'],
+      correct: 2, // 16
+      hint: 'y = 4² = 4 × 4 = 16',
+    },
+    {
+      type: 'choice',
+      text: '💡 O que significa dizer que y é FUNÇÃO de x?\n(Escolha a melhor explicação)',
+      options: [
+        'y e x são sempre iguais',
+        'Para cada x existe exatamente um y',
+        'x depende de y',
+        'y pode ser qualquer número independente de x',
+      ],
+      correct: 1,
+      hint: 'Definição de função: a cada valor de x (entrada), corresponde exatamente um valor de y (saída).',
+    },
+  ];
+}
+
+function buildWorld2() {
+  return [
+    {
+      type: 'choice',
+      text: '📏 Função do 1º grau: y = ax + b\n\nNa função y = 3x + 2:\n• "a" é o coeficiente angular (inclinação)\n• "b" é o coeficiente linear (onde corta o eixo y)\n\nQual é o valor de "a"?',
+      options: ['2', '3', '1', '5'],
+      correct: 1,
+      hint: 'Em y = 3x + 2, o número que multiplica o x é o "a". Aqui "a" = 3.',
+    },
+    {
+      type: 'choice',
+      text: '📈 Na função y = 2x + 1:\nQuando x = 0, qual é y?\n\n(Dica: b é onde a reta toca o eixo y)',
+      options: ['0', '1', '2', '3'],
+      correct: 1,
+      hint: 'Quando x = 0: y = 2×0 + 1 = 1. O "b" (=1) é exatamente onde a reta cruza o eixo y!',
+    },
+    {
+      type: 'choice',
+      text: '📉 Crescimento e decrescimento:\n\nSe "a" > 0: função CRESCENTE (↗)\nSe "a" < 0: função DECRESCENTE (↘)\n\nA função y = -2x + 5 é:',
+      options: ['Crescente', 'Decrescente', 'Constante', 'Não é função'],
+      correct: 1,
+      hint: '"a" = -2. Como -2 < 0, a função é DECRESCENTE. O gráfico vai de cima para baixo da esquerda para a direita.',
+    },
+    {
+      type: 'linear_graph',
+      text: '🎯 Olhe o gráfico abaixo.\nA reta passa pelos pontos (0, 1) e (1, 3).\n\nQual é a função representada?',
+      points: [{x:0,y:1},{x:1,y:3}],
+      options: ['y = 2x + 1', 'y = x + 1', 'y = 3x', 'y = 2x'],
+      correct: 0,
+      hint: 'b = y quando x=0 = 1. a = (y2-y1)/(x2-x1) = (3-1)/(1-0) = 2. Então: y = 2x + 1.',
+    },
+    {
+      type: 'choice',
+      text: '🛒 Aplicação real:\nUm taxi cobra R$ 5,00 de bandeirada\nmais R$ 2,00 por km rodado.\n\nSe y = preço e x = km, qual é a função?',
+      options: ['y = 5x + 2', 'y = 2x + 5', 'y = 5x', 'y = 2x'],
+      correct: 1,
+      hint: 'R$ 2,00 por km → a = 2 (multiplica o km). R$ 5,00 fixo → b = 5. Logo y = 2x + 5.',
+    },
+  ];
+}
+
+function buildWorld3() {
+  return [
+    {
+      type: 'linear_graph',
+      text: '📊 Observe o gráfico.\nA reta cruza o eixo y em 3 e o eixo x em -1,5.\n\nA função é crescente ou decrescente?',
+      points: [{x:-2,y:-1},{x:2,y:7}],
+      options: ['Crescente', 'Decrescente', 'Constante', 'Não dá para saber'],
+      correct: 0,
+      hint: 'A reta sobe da esquerda para a direita? Sim! Então é crescente. Quando "a" > 0, a reta sobe.',
+    },
+    {
+      type: 'linear_graph',
+      text: '🔍 Neste gráfico, quando x = 2, qual é o valor de y?\n(A função é y = 2x + 1)',
+      points: [{x:0,y:1},{x:2,y:5}],
+      options: ['3', '4', '5', '6'],
+      correct: 2,
+      hint: 'Substitua: y = 2×2 + 1 = 4 + 1 = 5. Ou observe o ponto (2, 5) no gráfico.',
+    },
+    {
+      type: 'choice',
+      text: '⚡ Se a reta de uma função LINEAR passa pelos pontos:\n(0, 4) e (2, 0)\n\nQual é o coeficiente angular "a"?',
+      options: ['2', '-2', '4', '-4'],
+      correct: 1,
+      hint: 'a = (y2-y1)/(x2-x1) = (0-4)/(2-0) = -4/2 = -2',
+    },
+    {
+      type: 'choice',
+      text: '🌡️ Aplicação: Um cientista mede temperatura.\nNo tempo 0 está 20°C.\nCada hora a temperatura cai 3°C.\n\nDepois de 4 horas, qual a temperatura?',
+      options: ['8°C', '32°C', '12°C', '6°C'],
+      correct: 0,
+      hint: 'y = -3x + 20. Com x=4: y = -3×4 + 20 = -12 + 20 = 8°C',
+    },
+    {
+      type: 'choice',
+      text: '🤑 João ganha R$ 15 por hora de trabalho.\nEle já tem R$ 50 guardados.\n\nApós trabalhar 3 horas, quanto terá no total?',
+      options: ['R$ 45', 'R$ 65', 'R$ 95', 'R$ 105'],
+      correct: 2,
+      hint: 'y = 15x + 50. Com x=3: y = 15×3 + 50 = 45 + 50 = 95',
+    },
+  ];
+}
+
+function buildWorld4() {
+  return [
+    {
+      type: 'choice',
+      text: '🌊 Função do 2º grau: y = ax² + bx + c\n\nO gráfico é uma PARÁBOLA.\n• Se a > 0: parábola abre para CIMA (∪)\n• Se a < 0: parábola abre para BAIXO (∩)\n\nEm y = 2x² - 3x + 1, para qual lado abre?',
+      options: ['Para cima (∪)', 'Para baixo (∩)', 'Não abre', 'Reta'],
+      correct: 0,
+      hint: 'a = 2. Como 2 > 0, a parábola abre para CIMA, como uma tigela.',
+    },
+    {
+      type: 'parabola',
+      text: '📐 Olhe a parábola abaixo.\nO VÉRTICE é o ponto mais baixo (ou mais alto).\n\nQual é o vértice desta parábola?\n(Função: y = x² - 4x + 3)',
+      a: 1, b: -4, c: 3,
+      options: ['(2, -1)', '(2, 1)', '(0, 3)', '(-2, 1)'],
+      correct: 0,
+      hint: 'Vértice: xv = -b/(2a) = -(-4)/(2×1) = 4/2 = 2\nyv = 2² - 4×2 + 3 = 4 - 8 + 3 = -1\nVértice = (2, -1)',
+    },
+    {
+      type: 'parabola',
+      text: '🎯 As RAÍZES são onde y = 0 (a parábola toca o eixo x).\n\nNa função y = x² - 5x + 6:\nQuais são as raízes?',
+      a: 1, b: -5, c: 6,
+      options: ['x = 2 e x = 3', 'x = 1 e x = 6', 'x = -2 e x = -3', 'Não tem raízes'],
+      correct: 0,
+      hint: 'Fatore: (x-2)(x-3) = 0 → x=2 ou x=3. Verifique: 2²-5×2+6=4-10+6=0 ✓',
+    },
+    {
+      type: 'choice',
+      text: '⚽ Uma bola é chutada para cima.\nA altura y (em metros) no tempo x (em segundos) é:\ny = -5x² + 20x\n\nQual é a altura máxima da bola?',
+      options: ['10 metros', '20 metros', '40 metros', '5 metros'],
+      correct: 1,
+      hint: 'Vértice: xv = -20/(2×(-5)) = -20/(-10) = 2s\nyv = -5×4 + 20×2 = -20 + 40 = 20 metros',
+    },
+    {
+      type: 'choice',
+      text: '🔢 Na função y = x² - 9:\nQuando y = 0, quais são os valores de x?\n\n(Dica: x² - 9 = 0 → x² = 9)',
+      options: ['x = 3 e x = -3', 'x = 9 e x = -9', 'x = 3', 'Não tem solução'],
+      correct: 0,
+      hint: 'x² = 9 → x = ±√9 = ±3. As raízes são x=3 e x=-3.',
+    },
+  ];
+}
+
+function buildWorld5() {
+  return [
+    {
+      type: 'choice',
+      text: '🔥 DESAFIO FINAL!\n\nQual dessas é uma função do 2º grau?',
+      options: ['y = 3x + 1', 'y = x² + 2x - 1', 'y = 5', 'y = x/2'],
+      correct: 1,
+      hint: 'Função do 2º grau tem x² (x elevado ao quadrado). Só a opção y = x² + 2x - 1 tem x².',
+    },
+    {
+      type: 'linear_graph',
+      text: '📈 Qual função tem gráfico DECRESCENTE\ne que passa por (0, 4)?',
+      points: [{x:0,y:4},{x:2,y:0}],
+      options: ['y = 2x + 4', 'y = -2x + 4', 'y = 2x - 4', 'y = -2x - 4'],
+      correct: 1,
+      hint: 'Passa por (0,4) → b=4. Decrescente → a<0. Logo y = -2x + 4.',
+    },
+    {
+      type: 'parabola',
+      text: '🎯 A parábola y = -x² + 4x - 3\ntem concavidade para:',
+      a: -1, b: 4, c: -3,
+      options: ['Cima (∪)', 'Baixo (∩)', 'Direita', 'Esquerda'],
+      correct: 1,
+      hint: 'a = -1. Como -1 < 0, a parábola abre para BAIXO (∩), como uma montanha.',
+    },
+    {
+      type: 'choice',
+      text: '💰 Um produto custa R$ 10,00 por unidade.\nA empresa tem custos fixos de R$ 200,00.\n\nFunção do lucro: y = 10x - 200\nQuantas unidades precisa vender para ter lucro zero?',
+      options: ['10 unidades', '20 unidades', '100 unidades', '200 unidades'],
+      correct: 1,
+      hint: 'Lucro zero: 10x - 200 = 0 → 10x = 200 → x = 20 unidades.',
+    },
+    {
+      type: 'choice',
+      text: '🏆 PERGUNTA FINAL!\n\nO vértice da função y = x² - 6x + 8 é:',
+      options: ['(3, -1)', '(3, 1)', '(-3, -1)', '(6, 8)'],
+      correct: 0,
+      hint: 'xv = -(-6)/(2×1) = 6/2 = 3\nyv = 9 - 18 + 8 = -1\nVértice = (3, -1)',
+    },
+  ];
+}
+
+// ================================================================
+//  AUDIO (Web Audio API — opcional)
+// ================================================================
+let audioCtx = null;
+function getAudio() {
+  if (!audioCtx) {
+    try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch {}
+  }
+  return audioCtx;
+}
+function playBeep(freq=440, dur=0.15, type='sine', vol=0.3) {
+  try {
+    const ctx = getAudio(); if (!ctx) return;
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.frequency.value = freq; o.type = type;
+    g.gain.setValueAtTime(vol, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur);
+    o.start(); o.stop(ctx.currentTime + dur);
+  } catch {}
+}
+function soundCorrect() { playBeep(880,.15,'sine',.25); setTimeout(()=>playBeep(1100,.15,'sine',.2),120); }
+function soundWrong()   { playBeep(200,.25,'sawtooth',.15); }
+function soundStar()    { [600,800,1000,1200].forEach((f,i)=>setTimeout(()=>playBeep(f,.12,'sine',.18),i*80)); }
+
+// ================================================================
+//  STARS BACKGROUND
+// ================================================================
+(function initStars() {
+  const canvas = document.getElementById('stars-canvas');
+  const ctx = canvas.getContext('2d');
+  let stars = [];
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    stars = Array.from({length:120},()=>({
+      x: Math.random()*canvas.width,
+      y: Math.random()*canvas.height,
+      r: Math.random()*1.5+.3,
+      a: Math.random(),
+      da: (Math.random()-.5)*.01,
+    }));
+  }
+  function draw() {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    stars.forEach(s=>{
+      s.a = Math.max(.1,Math.min(1,s.a+s.da));
+      if(s.a<=.1||s.a>=1) s.da*=-1;
+      ctx.beginPath();
+      ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+      ctx.fillStyle=`rgba(180,220,255,${s.a})`;
+      ctx.fill();
+    });
+    requestAnimationFrame(draw);
+  }
+  resize();
+  window.addEventListener('resize',resize);
+  draw();
+})();
+
+// ================================================================
+//  CANVAS: Draw graphs
+// ================================================================
+function drawLinearGraph(canvas, pts) {
+  const W=canvas.width, H=canvas.height;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#1a2f45'; ctx.fillRect(0,0,W,H);
+
+  // Grid
+  const cx=W/2, cy=H/2, scale=30;
+  ctx.strokeStyle='rgba(255,255,255,.08)'; ctx.lineWidth=1;
+  for(let x=cx%scale;x<W;x+=scale){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for(let y=cy%scale;y<H;y+=scale){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+
+  // Axes
+  ctx.strokeStyle='rgba(255,255,255,.3)'; ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(W,cy);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx,H);ctx.stroke();
+
+  // Axis labels
+  ctx.fillStyle='rgba(140,180,204,.6)'; ctx.font='12px Segoe UI';
+  for(let i=-6;i<=6;i++){
+    if(i===0)continue;
+    ctx.fillText(i,cx+i*scale-4,cy+14);
+    ctx.fillText(i,cx-18,cy-i*scale+4);
+  }
+  ctx.fillStyle='var(--accent)';ctx.font='bold 13px Segoe UI';
+  ctx.fillText('x',W-14,cy-6); ctx.fillText('y',cx+6,12);
+
+  if(!pts||pts.length<2)return;
+  // Derive line from two points
+  const [p1,p2]=pts;
+  const a=(p2.y-p1.y)/(p2.x-p1.x);
+  const b=p1.y-a*p1.x;
+  const x1c=(-cx/scale), y1c=a*x1c+b;
+  const x2c=((W-cx)/scale), y2c=a*x2c+b;
+
+  ctx.strokeStyle='#00e5ff'; ctx.lineWidth=3; ctx.shadowColor='#00e5ff'; ctx.shadowBlur=8;
+  ctx.beginPath();
+  ctx.moveTo(cx+x1c*scale, cy-y1c*scale);
+  ctx.lineTo(cx+x2c*scale, cy-y2c*scale);
+  ctx.stroke();
+  ctx.shadowBlur=0;
+
+  // Points
+  pts.forEach(p=>{
+    ctx.beginPath();
+    ctx.arc(cx+p.x*scale, cy-p.y*scale, 5,0,Math.PI*2);
+    ctx.fillStyle='#ffe600'; ctx.fill();
+    ctx.strokeStyle='#000'; ctx.lineWidth=1.5; ctx.stroke();
+    ctx.fillStyle='#fff'; ctx.font='bold 12px Segoe UI';
+    ctx.fillText(`(${p.x},${p.y})`, cx+p.x*scale+7, cy-p.y*scale-5);
+  });
+}
+
+function drawParabola(canvas, a, b, c) {
+  const W=canvas.width, H=canvas.height;
+  const ctx=canvas.getContext('2d');
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#1a2f45'; ctx.fillRect(0,0,W,H);
+
+  const cx=W/2, cy=H/2, scale=28;
+  ctx.strokeStyle='rgba(255,255,255,.08)'; ctx.lineWidth=1;
+  for(let x=cx%scale;x<W;x+=scale){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for(let y=cy%scale;y<H;y+=scale){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+  ctx.strokeStyle='rgba(255,255,255,.3)'; ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(W,cy);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx,H);ctx.stroke();
+
+  // Parabola
+  ctx.strokeStyle='#ff4fcb'; ctx.lineWidth=3; ctx.shadowColor='#ff4fcb'; ctx.shadowBlur=8;
+  ctx.beginPath();
+  let started=false;
+  for(let px=0;px<=W;px+=1){
+    const xv=(px-cx)/scale;
+    const yv=a*xv*xv+b*xv+c;
+    const py=cy-yv*scale;
+    if(py>-20&&py<H+20){
+      if(!started){ctx.moveTo(px,py);started=true;}
+      else ctx.lineTo(px,py);
+    } else { started=false; }
+  }
+  ctx.stroke(); ctx.shadowBlur=0;
+
+  // Vertex
+  const xv2=-b/(2*a);
+  const yv2=a*xv2*xv2+b*xv2+c;
+  const vx=cx+xv2*scale, vy=cy-yv2*scale;
+  ctx.beginPath();ctx.arc(vx,vy,7,0,Math.PI*2);
+  ctx.fillStyle='#ffe600'; ctx.fill();
+  ctx.strokeStyle='#000';ctx.lineWidth=2;ctx.stroke();
+  ctx.fillStyle='#fff';ctx.font='bold 12px Segoe UI';
+  ctx.fillText(`Vértice(${xv2.toFixed(1)},${yv2.toFixed(1)})`,vx+8,vy-6);
+
+  // Axis label
+  ctx.fillStyle='rgba(140,180,204,.6)'; ctx.font='12px Segoe UI';
+  for(let i=-5;i<=5;i++){
+    if(i===0)continue;
+    ctx.fillText(i,cx+i*scale-4,cy+14);
+    ctx.fillText(i,cx-18,cy-i*scale+4);
+  }
+}
+
+function drawMachineCanvas(canvas, formula, inputVal) {
+  const W=canvas.width, H=canvas.height;
+  const ctx=canvas.getContext('2d');
+  ctx.clearRect(0,0,W,H);
+
+  // Background
+  ctx.fillStyle='#1a2f45'; ctx.fillRect(0,0,W,H);
+
+  // Input box
+  const boxW=100, boxH=60, gap=20, arrowW=40, machW=160;
+  const startX=20, midY=H/2;
+
+  // Input
+  roundRect(ctx, startX, midY-boxH/2, boxW, boxH, 12, '#253d5b', '#8ab4cc');
+  ctx.fillStyle='#8ab4cc'; ctx.font='13px Segoe UI'; ctx.textAlign='center';
+  ctx.fillText('ENTRADA', startX+boxW/2, midY-boxH/2-8);
+  ctx.fillStyle='#00e5ff'; ctx.font='bold 24px Segoe UI';
+  ctx.fillText(`x = ${inputVal}`, startX+boxW/2, midY+8);
+
+  // Arrow
+  const ax=startX+boxW+gap;
+  drawArrow(ctx, ax, midY, ax+arrowW, midY, '#00e5ff');
+
+  // Machine box
+  const mx=ax+arrowW+gap;
+  roundRect(ctx, mx, midY-boxH/2-14, machW, boxH+28, 14, '#0d1b2a', '#00e5ff', 2);
+  ctx.fillStyle='#ffe600'; ctx.font='bold 11px Segoe UI'; ctx.textAlign='center';
+  ctx.fillText('MÁQUINA', mx+machW/2, midY-boxH/2+8);
+  ctx.fillStyle='#00e5ff'; ctx.font='bold 18px Segoe UI';
+  ctx.fillText(formula, mx+machW/2, midY+10);
+
+  // Arrow2
+  const ax2=mx+machW+gap;
+  drawArrow(ctx, ax2, midY, ax2+arrowW, midY, '#39ff14');
+
+  // Output box
+  const ox=ax2+arrowW+gap;
+  roundRect(ctx, ox, midY-boxH/2, boxW, boxH, 12, '#253d5b', '#39ff14');
+  ctx.fillStyle='#8ab4cc'; ctx.font='13px Segoe UI'; ctx.textAlign='center';
+  ctx.fillText('SAÍDA', ox+boxW/2, midY-boxH/2-8);
+  ctx.fillStyle='#39ff14'; ctx.font='bold 24px Segoe UI';
+  ctx.fillText('y = ?', ox+boxW/2, midY+8);
+}
+
+function roundRect(ctx,x,y,w,h,r,fill,stroke,lw=1.5){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y); ctx.lineTo(x+w-r,y);
+  ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y);
+  ctx.closePath();
+  ctx.fillStyle=fill; ctx.fill();
+  if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=lw;ctx.stroke();}
+}
+
+function drawArrow(ctx,x1,y1,x2,y2,color){
+  ctx.strokeStyle=color; ctx.lineWidth=3;
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2-8,y2); ctx.stroke();
+  ctx.fillStyle=color;
+  ctx.beginPath();
+  ctx.moveTo(x2,y2); ctx.lineTo(x2-10,y2-5); ctx.lineTo(x2-10,y2+5); ctx.closePath();
+  ctx.fill();
+}
+
+// ================================================================
+//  FIREWORKS
+// ================================================================
+function runFireworks(canvas) {
+  const ctx=canvas.getContext('2d');
+  const W=canvas.width, H=canvas.height;
+  const particles=[];
+  function spawn(x,y){
+    for(let i=0;i<40;i++){
+      const angle=Math.random()*Math.PI*2;
+      const speed=Math.random()*4+1;
+      particles.push({
+        x,y,
+        vx:Math.cos(angle)*speed, vy:Math.sin(angle)*speed,
+        life:1, r:Math.random()*3+1,
+        color:`hsl(${Math.random()*360},100%,60%)`,
+      });
+    }
+  }
+  let frame=0;
+  const id=setInterval(()=>{
+    ctx.fillStyle='rgba(13,27,42,.18)'; ctx.fillRect(0,0,W,H);
+    if(frame%25===0) spawn(Math.random()*W, Math.random()*H*.7+20);
+    particles.forEach((p,i)=>{
+      p.x+=p.vx; p.y+=p.vy; p.vy+=.05; p.life-=.015;
+      if(p.life<=0){particles.splice(i,1);return;}
+      ctx.globalAlpha=p.life;
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=p.color;ctx.fill();
+    });
+    ctx.globalAlpha=1;
+    frame++;
+    if(frame>300) clearInterval(id);
+  },16);
+}
+
+// ================================================================
+//  UI HELPERS
+// ================================================================
+let toastTimer=null;
+function showToast(msg, type='info', dur=2600) {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className='show '+type;
+  clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>{ t.className=''; },dur);
+}
+
+function showBurst(text, dur=1600) {
+  const el=document.getElementById('starburst');
+  document.getElementById('starburst-text').textContent=text;
+  el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),dur);
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const s=document.getElementById(id);
+  if(s) s.classList.add('active');
+  const topBar=document.getElementById('top-bar');
+  topBar.classList.toggle('hidden', id==='intro-screen'||id==='loading-screen');
+}
+
+function updateTopBar() {
+  document.getElementById('stars-count').textContent=G.stars;
+  document.getElementById('lives-count').textContent='❤️'.repeat(Math.min(G.lives,5));
+  const pct=Math.min(100,Math.round((G.xp/MAX_XP)*100));
+  document.getElementById('xp-bar').style.width=pct+'%';
+  // World dots
+  const dots=document.getElementById('world-dots');
+  dots.innerHTML=WORLDS.map((w,i)=>{
+    const cls=G.worldsDone.includes(i)?'done':i===G.currentWorld?'active':'';
+    return `<div class="world-dot ${cls}" title="${w.title}" aria-label="${w.title}"></div>`;
+  }).join('');
+}
+
+// ================================================================
+//  WORLD MAP
+// ================================================================
+function renderWorldMap() {
+  showScreen('world-map-screen');
+  updateTopBar();
+  const grid=document.getElementById('world-grid');
+  grid.innerHTML=WORLDS.map((w,i)=>{
+    const done=G.worldsDone.includes(i);
+    const locked=i>0&&!G.worldsDone.includes(i-1);
+    const stars=G.worldStars[i]||0;
+    const starStr='⭐'.repeat(stars)+'☆'.repeat(Math.max(0,3-stars));
+    return `
+    <div class="world-card${done?' done':''}${locked?' locked':''}"
+         role="listitem"
+         aria-label="${w.title}: ${w.subtitle}${locked?' (bloqueado)':done?' (completo)':''}"
+         tabindex="${locked?-1:0}"
+         onclick="onWorldClick(${i})"
+         onkeydown="if(event.key==='Enter')onWorldClick(${i})">
+      <div class="world-card-lock">${locked?'🔒':done?'✅':''}</div>
+      <div class="world-card-icon">${w.icon}</div>
+      <div class="world-card-title">${w.title} — ${w.subtitle}</div>
+      <div class="world-card-desc">${w.desc}</div>
+      <div class="world-card-stars">${starStr}</div>
+    </div>`;
+  }).join('');
+}
+
+function onWorldClick(i) {
+  if(i>0&&!G.worldsDone.includes(i-1)) {
+    showToast('🔒 Complete o mundo anterior primeiro!','info');
+    return;
+  }
+  G.currentWorld=i;
+  G.currentQ=0;
+  G.hintsUsed=0;
+  startQuestion();
+}
+
+// ================================================================
+//  GAME LOOP
+// ================================================================
+function startQuestion() {
+  showScreen('game-screen');
+  updateTopBar();
+  G.wrongOnThis=0;
+  G.hintShown=false;
+
+  const world=WORLDS[G.currentWorld];
+  const q=world.questions[G.currentQ];
+  const total=world.questions.length;
+
+  document.getElementById('world-title-small').textContent=`${world.icon} ${world.subtitle}`;
+  document.getElementById('q-counter').textContent=`Pergunta ${G.currentQ+1} de ${total}`;
+
+  const qText=document.getElementById('question-text');
+  qText.textContent=q.text;
+
+  // Visual
+  const visual=document.getElementById('question-visual');
+  visual.innerHTML='';
+  if(q.type==='machine') {
+    const wrap=document.createElement('div'); wrap.className='canvas-wrap';
+    const c=document.createElement('canvas'); c.width=500; c.height=130; c.style.width='100%'; c.style.maxWidth='500px';
+    wrap.appendChild(c); visual.appendChild(wrap);
+    drawMachineCanvas(c, q.formula, q.inputVal);
+  } else if(q.type==='linear_graph') {
+    const wrap=document.createElement('div'); wrap.className='canvas-wrap';
+    const c=document.createElement('canvas'); c.width=320; c.height=200; c.style.width='100%'; c.style.maxWidth='320px';
+    wrap.appendChild(c); visual.appendChild(wrap);
+    drawLinearGraph(c, q.points);
+  } else if(q.type==='parabola') {
+    const wrap=document.createElement('div'); wrap.className='canvas-wrap';
+    const c=document.createElement('canvas'); c.width=320; c.height=200; c.style.width='100%'; c.style.maxWidth='320px';
+    wrap.appendChild(c); visual.appendChild(wrap);
+    drawParabola(c, q.a, q.b, q.c);
+  }
+
+  // Options
+  const opts=document.getElementById('question-options');
+  opts.innerHTML=`<div class="options-grid" role="group" aria-label="Opções de resposta">
+    ${q.options.map((o,i)=>`
+    <button class="option-btn" data-i="${i}"
+            onclick="onAnswer(${i})"
+            aria-label="Opção ${i+1}: ${o}">
+      ${o}
+    </button>`).join('')}
+  </div>`;
+
+  document.getElementById('hint-box').classList.remove('show');
+  document.getElementById('btn-next').style.display='none';
+}
+
+function onAnswer(idx) {
+  const world=WORLDS[G.currentWorld];
+  const q=world.questions[G.currentQ];
+  const buttons=document.querySelectorAll('.option-btn');
+  buttons.forEach(b=>b.disabled=true);
+
+  const correct=q.correct;
+  if(idx===correct) {
+    // CORRECT
+    buttons[idx].classList.add('correct');
+    soundCorrect();
+    G.correctInRow++;
+    const bonus=G.wrongOnThis===0?3:(G.wrongOnThis===1?2:1);
+    G.stars+=bonus;
+    G.xp=Math.min(MAX_XP, G.xp+20);
+    updateTopBar();
+    if(G.correctInRow>=5){ earnMedal('streak5'); showBurst('🔥 5 seguidos!'); }
+    if(G.wrongOnThis===0) showToast('🌟 Perfeito! +'+bonus+' estrelas','success');
+    else showToast('✅ Correto! +'+bonus+' estrelas','success');
+    soundStar();
+    document.getElementById('btn-next').style.display='block';
+  } else {
+    // WRONG
+    buttons[idx].classList.add('wrong');
+    buttons[correct].classList.add('reveal-correct');
+    soundWrong();
+    G.correctInRow=0;
+    G.wrongOnThis++;
+    showToast('❌ Quase! Veja a resposta certa em verde.','error');
+    // Auto show hint after 1st wrong
+    if(G.wrongOnThis>=1) showHint();
+    document.getElementById('btn-next').style.display='block';
+  }
+  saveGame();
+}
+
+function showHint() {
+  const world=WORLDS[G.currentWorld];
+  const q=world.questions[G.currentQ];
+  document.getElementById('hint-text').textContent=q.hint;
+  document.getElementById('hint-box').classList.add('show');
+  G.hintShown=true;
+  G.hintsUsed++;
+}
+
+document.getElementById('btn-hint').addEventListener('click',()=>{
+  showHint();
+  showToast('💡 Dica revelada!','info');
+});
+
+document.getElementById('btn-next').addEventListener('click',()=>{
+  G.currentQ++;
+  const world=WORLDS[G.currentWorld];
+  if(G.currentQ>=world.questions.length) {
+    finishWorld();
+  } else {
+    startQuestion();
+  }
+});
+
+document.getElementById('btn-back-map').addEventListener('click',()=>{
+  renderWorldMap();
+});
+
+// ================================================================
+//  FINISH WORLD
+// ================================================================
+function finishWorld() {
+  const wi=G.currentWorld;
+  const totalStars=G.stars;
+  // Calc stars for this world (1-3 based on hints used)
+  const earned=G.hintsUsed===0?3:G.hintsUsed<=2?2:1;
+  if(!(G.worldsDone.includes(wi))) G.worldsDone.push(wi);
+  G.worldStars[wi]=Math.max(G.worldStars[wi]||0,earned);
+
+  // Medals
+  if(WORLD_MEDALS[wi]) earnMedal(WORLD_MEDALS[wi]);
+  if(wi===4) earnMedal('champion');
+  if(G.hintsUsed===0) earnMedal('no_hint');
+  if(earned===3) earnMedal('perfect');
+
+  saveGame();
+  showScreen('complete-screen');
+
+  document.getElementById('complete-emoji').textContent=wi===4?'🏆':'🎉';
+  document.getElementById('complete-title').textContent=`${WORLDS[wi].subtitle} — Concluído!`;
+  document.getElementById('complete-msg').textContent=
+    `Você completou o ${WORLDS[wi].title} com ${earned} estrela(s)!`;
+  document.getElementById('complete-stars').textContent='⭐'.repeat(earned)+'☆'.repeat(3-earned);
+
+  soundStar();
+  showBurst(earned===3?'🌟 PERFEITO!':'✅ Mundo Completo!');
+
+  const medalsDiv=document.getElementById('medals-earned');
+  medalsDiv.innerHTML='';
+  const newMedals=ALL_MEDALS.filter(m=>G.medals.includes(m.id));
+  newMedals.slice(-3).forEach(m=>{
+    const d=document.createElement('div');
+    d.className='medal-item earned';
+    d.innerHTML=`<div class="icon">${m.icon}</div><div class="lbl">${m.name}</div>`;
+    medalsDiv.appendChild(d);
+  });
+
+  const nextBtn=document.getElementById('btn-next-world');
+  if(wi>=WORLDS.length-1) {
+    nextBtn.textContent='🏆 Ver Vitória Final';
+    nextBtn.onclick=showVictory;
+  } else {
+    nextBtn.textContent='Próximo Mundo 🌟';
+    nextBtn.onclick=()=>onWorldClick(wi+1);
+  }
+}
+
+document.getElementById('btn-back-map2').addEventListener('click',renderWorldMap);
+
+// ================================================================
+//  VICTORY
+// ================================================================
+function showVictory() {
+  showScreen('victory-screen');
+  document.getElementById('final-stars').textContent=`Total: ⭐ ${G.stars} estrelas`;
+  const c=document.getElementById('fireworks-canvas');
+  runFireworks(c);
+}
+document.getElementById('btn-restart').addEventListener('click',()=>{
+  if(confirm('Tem certeza? Seu progresso será apagado.')) {
+    localStorage.removeItem(SAVE_KEY);
+    location.reload();
+  }
+});
+
+// ================================================================
+//  MEDALS
+// ================================================================
+function earnMedal(id) {
+  if(!G.medals.includes(id)) {
+    G.medals.push(id);
+    const m=ALL_MEDALS.find(x=>x.id===id);
+    if(m) showToast(`🏅 Medalha desbloqueada: ${m.name}!`,'info',3000);
+    saveGame();
+  }
+}
+
+document.getElementById('btn-menu-top').addEventListener('click',()=>{
+  showScreen('medals-screen');
+  renderMedals();
+});
+document.getElementById('btn-medals-back').addEventListener('click',()=>{
+  renderWorldMap();
+});
+
+function renderMedals() {
+  const div=document.getElementById('all-medals');
+  div.innerHTML=ALL_MEDALS.map(m=>{
+    const earned=G.medals.includes(m.id);
+    return `<div class="medal-item ${earned?'earned':''}">
+      <div class="icon">${earned?m.icon:'🔒'}</div>
+      <div class="lbl">${m.name}</div>
+      <div style="font-size:.75rem;color:var(--gray);margin-top:3px">${m.desc}</div>
+    </div>`;
+  }).join('');
+}
+
+// ================================================================
+//  SAVE / LOAD
+// ================================================================
+function saveGame() {
+  writeSave(G);
+}
+
+function loadGame() {
+  const saved=loadSave();
+  if(saved) {
+    G={...G,...saved};
+    return true;
+  }
+  return false;
+}
+
+// ================================================================
+//  INIT
+// ================================================================
+function init() {
+  const hasSave=loadGame();
+
+  // Show continue button if save exists
+  if(hasSave&&G.worldsDone.length>0) {
+    document.getElementById('btn-continue').style.display='inline-flex';
+  }
+
+  document.getElementById('btn-start').addEventListener('click',()=>{
+    // Reset progress
+    G={
+      stars:0, xp:0, lives:5, worldsDone:[], worldStars:{}, medals:[],
+      currentWorld:0, currentQ:0, correctInRow:0, wrongOnThis:0,
+      hintShown:false, hintsUsed:0,
+    };
+    saveGame();
+    renderWorldMap();
+  });
+
+  document.getElementById('btn-continue').addEventListener('click',()=>{
+    renderWorldMap();
+  });
+
+  // Hide loading
+  setTimeout(()=>{
+    document.getElementById('loading-screen').style.display='none';
+    showScreen('intro-screen');
+  },900);
+}
+
+init();
+</script>
+</body>
+</html>
